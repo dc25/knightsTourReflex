@@ -2,7 +2,6 @@ import           Data.Map       (Map)
 import qualified Data.Map as M
 import           Reflex.Dom
 import           Data.Monoid
--- import           Control.Monad
 
 main :: IO ()
 main = mainWidget atompit
@@ -11,8 +10,23 @@ ns = Just "http://www.w3.org/2000/svg"
 
 atompit :: MonadWidget t m => m ()
 atompit = do
-  elDynAttrNS' ns "svg" (constDyn $ "width" =: "1000" <> "height" =: "1000") $ 
-      elStopPropagationNS ns "g" Click $ elDynAttrNS' ns "rect" (constDyn $ "width" =: "100" <> "height" =: "200") $  return ()
-  return ()
+    let 
+        showChecker :: MonadWidget t m => Int -> Int -> m (Event t ())
+        showChecker r c = do
+            (el, ev) <- elDynAttrNS' ns "rect" (constDyn $ "x" =: show c <> "y" =: show r <> "width" =: "1" <> "height" =: "1" <> "fill" =: if (r + c) `mod` 2 == 0 then "blue" else "grey") $ return ()
+            return $ domEvent Click el
 
+        showCheckers :: MonadWidget t m => m [Event t ()]
+        showCheckers = 
+            let ckrs = [0..7] >>= \r -> 
+                       [0..7] >>= \c -> 
+                       [showChecker r c]
+            in sequence ckrs -- tricky
+    
+    
+    elDynAttrNS' ns "svg" (constDyn $ "viewBox" =: "0 0 8 8" <>  "width" =: "500" <> "height" =: "500") $ do
+        ckrs <- showCheckers
+        let clickEvent = return (leftmost ckrs) -- tricky
+        elStopPropagationNS ns "g" Click clickEvent
+    return ()
 
