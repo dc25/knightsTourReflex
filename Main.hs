@@ -4,12 +4,12 @@ import           Reflex.Dom
 import           Data.Monoid
 
 main :: IO ()
-main = mainWidget atompit
+main = mainWidget view
 
 ns = Just "http://www.w3.org/2000/svg"
 
-atompit :: MonadWidget t m => m ()
-atompit = do
+view :: MonadWidget t m => m ()
+view = do
     let 
         showChecker :: MonadWidget t m => Int -> Int -> m (Event t ())
         showChecker r c = do
@@ -24,9 +24,7 @@ atompit = do
             in sequence ckrs -- tricky
     
     
-    elDynAttrNS' ns "svg" (constDyn $ "viewBox" =: "0 0 8 8" <>  "width" =: "500" <> "height" =: "500") $ do
-        ckrs <- showCheckers
-        let clickEvent = return (leftmost ckrs) -- tricky
-        elStopPropagationNS ns "g" Click clickEvent
+    elDynAttrNS' ns "svg" (constDyn $ "viewBox" =: "0 0 8 8" <>  "width" =: "500" <> "height" =: "500") $ 
+        elStopPropagationNS ns "g" Click $ fmap leftmost showCheckers
     return ()
 
