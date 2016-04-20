@@ -5,6 +5,17 @@ import           Data.Monoid
 
 type Cell = (Int, Int)
 
+data Model = Model { rows :: Int
+                   , cols :: Int
+                   , path :: [Cell]
+                   , board :: [Cell]
+                   }
+init rc cc = 
+    let board = do r <- [0..rc-1] 
+                   c <- [0..cc-1] 
+                   return (r,c)
+    in Model rc cc [] board
+
 data Action = Tick Int | SetStart Cell
 
 main :: IO ()
