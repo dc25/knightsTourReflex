@@ -16,9 +16,10 @@ dt = 0.03
 
 type Cell = (Int, Int)
 
-data Model = Model { path :: [Cell]
-                   , board :: [Cell]
-                   }
+data Model = Model 
+    { path :: [Cell]
+    , board :: [Cell]
+    }
 
 initModel = 
     let board = do r <- [0..rowCount-1] 
@@ -29,14 +30,6 @@ initModel =
 
 data Action = Tick | SetStart Cell
 
-main :: IO ()
-main = do
-    startTime <- getCurrentTime
-    mainWidget $ do
-        rec selection <- view model
-            ticks <- fmap (const Tick) <$> tickLossy dt startTime 
-            model <- foldDyn update initModel $ mergeWith const [selection, ticks]
-        return ()
 
 nextMoves :: Model -> Cell -> [Cell]
 nextMoves model@(Model p b) startCell = 
@@ -116,3 +109,12 @@ view model = do
                               <> "height" =: show h)
                 $ elStopPropagationNS ns "g" Click $ render model
     return ev
+
+main :: IO ()
+main = do
+    startTime <- getCurrentTime
+    mainWidget $ do
+        rec selection <- view model
+            ticks <- fmap (const Tick) <$> tickLossy dt startTime 
+            model <- foldDyn update initModel $ mergeWith const [selection, ticks]
+        return ()
