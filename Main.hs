@@ -20,9 +20,9 @@ data Model = Model { path :: [Cell]
                    , board :: [Cell]
                    }
 
-initModel rc cc = 
-    let board = do r <- [0..rc-1] 
-                   c <- [0..cc-1] 
+initModel = 
+    let board = do r <- [0..rowCount-1] 
+                   c <- [0..colCount-1] 
                    [(r,c)]
         path = []
     in Model path board
@@ -33,9 +33,9 @@ main :: IO ()
 main = do
     startTime <- getCurrentTime
     mainWidget $ do
-        rec changes <- view model
+        rec selection <- view model
             ticks <- fmap (const Tick) <$> tickLossy dt startTime 
-            model <- foldDyn update (initModel rowCount colCount) $ mergeWith const [changes, ticks]
+            model <- foldDyn update initModel $ mergeWith const [selection, ticks]
         return ()
 
 nextMoves :: Model -> Cell -> [Cell]
