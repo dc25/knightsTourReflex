@@ -8,11 +8,15 @@ import           Data.Time.Clock
 import           Data.Monoid ((<>))
 import           Data.Function (on)
 
+w = 450
+h = 450
+rowCount=12
+colCount=12
+dt = 0.03
+
 type Cell = (Int, Int)
 
-data Model = Model { rows :: Int
-                   , cols :: Int
-                   , path :: [Cell]
+data Model = Model { path :: [Cell]
                    , board :: [Cell]
                    }
 
@@ -21,7 +25,7 @@ initModel rc cc =
                    c <- [0..cc-1] 
                    [(r,c)]
         path = []
-    in Model rc cc path board
+    in Model path board
 
 data Action = Tick | SetStart Cell
 
@@ -30,12 +34,12 @@ main = do
     startTime <- getCurrentTime
     mainWidget $ do
         rec changes <- view model
-            ticks <- fmap (const Tick) <$> tickLossy 1 startTime 
-            model <- foldDyn update (initModel 8 8) $ mergeWith const [changes, ticks]
+            ticks <- fmap (const Tick) <$> tickLossy dt startTime 
+            model <- foldDyn update (initModel rowCount colCount) $ mergeWith const [changes, ticks]
         return ()
 
 nextMoves :: Model -> Cell -> [Cell]
-nextMoves model@(Model r c p b) startCell = 
+nextMoves model@(Model p b) startCell = 
   let c = [ 1,  2, -1, -2]
 
       km = do cx <- c
@@ -47,22 +51,22 @@ nextMoves model@(Model r c p b) startCell =
   in filter (\j -> elem j b && notElem j p ) jumps
 
 bestMove :: Model -> Maybe Cell
-bestMove model@(Model _ _ p _) = 
+bestMove model@(Model p _) = 
     let options = (nextMoves model $ head p)
     in if null options 
        then Nothing 
        else Just $ minimumBy (compare `on` (length . nextMoves model)) options
 
 update :: Action -> Model -> Model
-update action m@(Model r c p b) =
+update action m@(Model p b) =
     case action of
         SetStart start -> 
-            Model r c [start] b
+            Model [start] b
         Tick ->  
             if null p then m 
             else case bestMove m of
                      Nothing -> m
-                     Just best ->  Model r c (best:p) b
+                     Just best ->  Model (best:p) b
             
 ns = Just "http://www.w3.org/2000/svg"
 
@@ -71,8 +75,8 @@ view model = do
     let 
         fillColor r c = if (r + c) `mod` 2 == 0 then "blue" else "grey"
 
-        showChecker :: MonadWidget t m => Int -> Int -> m (Event t Action)
-        showChecker r c = do
+        showChecker :: MonadWidget t m => Cell -> m (Event t Action)
+        showChecker cell@(r, c) = do
             (el, _) <- elDynAttrNS' ns "rect" 
                            (constDyn $  "x" =: show c 
                                      <> "y" =: show r 
@@ -80,16 +84,10 @@ view model = do
                                      <> "height" =: "1" 
                                      <> "fill" =: fillColor r c)
                        $ return ()
-            return $ const (SetStart (r,c)) <$> domEvent Click el -- tricky
+            return $ const (SetStart cell) <$> domEvent Click el 
 
-        checkers r c = 
-            let ckrs = do row <- [0..r-1] 
-                          col <- [0..c-1] 
-                          [showChecker row col]
-            in sequence ckrs -- tricky
-
-        showMove :: MonadWidget t m => Cell -> Cell -> m (Event t Action)
-        showMove pt0 pt1 = do
+        showMove :: MonadWidget t m => (Cell, Cell) -> m (Event t Action)
+        showMove (pt0, pt1) = do
             elDynAttrNS' ns "line" 
                  (constDyn $  "x1" =: show ((snd pt0 & fromIntegral :: Float) + 0.5)
                            <> "y1" =: show ((fst pt0 & fromIntegral :: Float) + 0.5)
@@ -99,12 +97,21 @@ view model = do
                  $ return ()
             return never
 
-        moves (Model _ _ p _) = 
-            if null p then [] else zipWith showMove p $ tail p
-    
+        render :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
+        render model = do
+            checkerMap <- mapDyn (M.fromList . map (\c -> (c,())) . board) model
+            checkerEvs <- listWithKey checkerMap (\c _ -> showChecker c)
+            checkerEv <- mapDyn (leftmost . M.elems) checkerEvs
+
+            let getMoves model@(Model path board) = zip path $ tail path
+            moveMap <- mapDyn (M.fromList . map (\c -> (c,())) . getMoves) model
+            listWithKey moveMap (\c _ -> showMove c)
+
+            return $ switchPromptlyDyn checkerEv
+
     (el, ev) <- elDynAttrNS' ns "svg" 
-                    (constDyn $  "viewBox" =: "0 0 8 8" 
-                              <> "width" =: "500"
-                              <> "height" =: "500") 
-                $ elStopPropagationNS ns "g" Click (leftmost <$> checkers 8 8)
+                    (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
+                              <> "width" =: show w
+                              <> "height" =: show h)
+                $ elStopPropagationNS ns "g" Click $ render model
     return ev
