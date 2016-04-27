@@ -21,46 +21,14 @@ data Model = Model
     , board :: [Cell]
     }
 
+data Action = Tick | SetStart Cell
+
 initModel = 
     let board = do r <- [0..rowCount-1] 
                    c <- [0..colCount-1] 
                    [(r,c)]
         path = []
     in Model path board
-
-data Action = Tick | SetStart Cell
-
-
-nextMoves :: Model -> Cell -> [Cell]
-nextMoves model@(Model p b) startCell = 
-  let c = [ 1,  2, -1, -2]
-
-      km = do cx <- c
-              cy <- c
-              if abs cx == abs cy then [] else [(cx,cy)]
-
-      jumps = map (\cell -> (fst cell + fst startCell, snd cell + snd startCell)) km
-
-  in filter (\j -> elem j b && notElem j p ) jumps
-
-bestMove :: Model -> Maybe Cell
-bestMove model@(Model p _) = 
-    let options = (nextMoves model $ head p)
-    in if null options 
-       then Nothing 
-       else Just $ minimumBy (compare `on` (length . nextMoves model)) options
-
-update :: Action -> Model -> Model
-update action m@(Model p b) =
-    case action of
-        SetStart start -> 
-            Model [start] b
-        Tick ->  
-            if null p then m 
-            else case bestMove m of
-                     Nothing -> m
-                     Just best ->  Model (best:p) b
-            
 
 view :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
 view model = do
@@ -110,6 +78,36 @@ view model = do
                 $ elStopPropagationNS ns "g" Click $ render model
     return ev
 
+nextMoves :: Model -> Cell -> [Cell]
+nextMoves model@(Model path board) startCell = 
+  let c = [ 1,  2, -1, -2]
+
+      km = do cx <- c
+              cy <- c
+              if abs cx == abs cy then [] else [(cx,cy)]
+
+      jumps = map (\cell -> (fst cell + fst startCell, snd cell + snd startCell)) km
+
+  in filter (\j -> elem j board && notElem j path ) jumps
+
+bestMove :: Model -> Maybe Cell
+bestMove model@(Model path _) = 
+    let options = (nextMoves model $ head path)
+    in if null options 
+       then Nothing 
+       else Just $ minimumBy (compare `on` (length . nextMoves model)) options
+
+update :: Action -> Model -> Model
+update action model@(Model path board) =
+    case action of
+        SetStart start -> 
+            Model [start] board
+        Tick ->  
+            if null path then model 
+            else case bestMove model of
+                     Nothing -> model
+                     Just best ->  Model (best:path) board
+
 main :: IO ()
 main = do
     startTime <- getCurrentTime
@@ -118,3 +116,4 @@ main = do
             ticks <- fmap (const Tick) <$> tickLossy dt startTime 
             model <- foldDyn update initModel $ mergeWith const [selection, ticks]
         return ()
+
