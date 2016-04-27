@@ -68,11 +68,12 @@ update action m@(Model p b) =
                      Nothing -> m
                      Just best ->  Model (best:p) b
             
-ns = Just "http://www.w3.org/2000/svg"
 
 view :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
 view model = do
     let 
+        ns = Just "http://www.w3.org/2000/svg"
+
         fillColor r c = if (r + c) `mod` 2 == 0 then "blue" else "grey"
 
         showChecker :: MonadWidget t m => Cell -> m (Event t Action)
