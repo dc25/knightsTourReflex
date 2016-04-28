@@ -71,18 +71,21 @@ view model = do
 
             return $ switchPromptlyDyn checkerEv
 
+        center = "style" =: "text-align: center;"
+
     unvisited <- mapDyn (\model -> "Unvisited count : " ++ show ((length.board) model - (length.path) model)) model
 
     el "div" $ do
-        el "h2" $ text "Knight's Tour"
-        el "h2" $ dynText unvisited
-        el "h2" $ text "(pick a square)"
-        (_, ev) <- elDynAttrNS' ns "svg" 
-                        (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
-                                  <> "width" =: show w
-                                  <> "height" =: show h)
-                    $ elStopPropagationNS ns "g" Click $ render model
-        return ev
+        elAttr "h2" center $ text "Knight's Tour"
+        elAttr "h2" center $ dynText unvisited
+        elAttr "h2" center $ text "(pick a square)"
+        elAttr "div" center $ do
+            (_, ev) <- elDynAttrNS' ns "svg" 
+                            (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
+                                      <> "width" =: show w
+                                      <> "height" =: show h)
+                        $ elStopPropagationNS ns "g" Click $ render model
+            return ev
 
 nextMoves :: Model -> Cell -> [Cell]
 nextMoves model@(Model path board) startCell = 
