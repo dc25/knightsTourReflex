@@ -10,9 +10,9 @@ import           Data.Function (on)
 
 w = 450
 h = 450
-rowCount=12
-colCount=12
-dt = 0.03
+rowCount=14
+colCount=14
+dt = 0.05
 
 type Cell = (Int, Int)
 
@@ -39,7 +39,7 @@ view model = do
 
         showChecker :: MonadWidget t m => Cell -> m (Event t Action)
         showChecker cell@(r, c) = do
-            (el, _) <- elDynAttrNS' ns "rect" 
+            (el, ev) <- elDynAttrNS' ns "rect" 
                            (constDyn $  "x" =: show c 
                                      <> "y" =: show r 
                                      <> "width" =: "1" 
@@ -71,7 +71,7 @@ view model = do
 
             return $ switchPromptlyDyn checkerEv
 
-    (el, ev) <- elDynAttrNS' ns "svg" 
+    (_, ev) <- elDynAttrNS' ns "svg" 
                     (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
                               <> "width" =: show w
                               <> "height" =: show h)
