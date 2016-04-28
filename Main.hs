@@ -10,8 +10,8 @@ import           Data.Function (on)
 
 w = 450
 h = 450
-rowCount=14
-colCount=14
+rowCount=10
+colCount=10
 dt = 0.05
 
 type Cell = (Int, Int)
