@@ -71,12 +71,18 @@ view model = do
 
             return $ switchPromptlyDyn checkerEv
 
-    (_, ev) <- elDynAttrNS' ns "svg" 
-                    (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
-                              <> "width" =: show w
-                              <> "height" =: show h)
-                $ elStopPropagationNS ns "g" Click $ render model
-    return ev
+    unvisited <- mapDyn (\model -> "Unvisited count : " ++ show ((length.board) model - (length.path) model)) model
+
+    el "div" $ do
+        el "h2" $ text "Knight's Tour"
+        el "h2" $ dynText unvisited
+        el "h2" $ text "(pick a square)"
+        (_, ev) <- elDynAttrNS' ns "svg" 
+                        (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
+                                  <> "width" =: show w
+                                  <> "height" =: show h)
+                    $ elStopPropagationNS ns "g" Click $ render model
+        return ev
 
 nextMoves :: Model -> Cell -> [Cell]
 nextMoves model@(Model path board) startCell = 
