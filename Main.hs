@@ -1,7 +1,6 @@
 {-# LANGUAGE RecursiveDo #-}
-import           Data.Map (Map)
+import           Data.Map (Map, fromList, elems)
 import           Data.List (minimumBy)
-import qualified Data.Map as M
 import           Reflex.Dom
 import           Reflex.Dom.Time
 import           Data.Time.Clock
@@ -61,12 +60,12 @@ view model = do
 
         render :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
         render model = do
-            checkerMap <- mapDyn (M.fromList . map (\c -> (c,())) . board) model
+            checkerMap <- mapDyn (fromList . map (\c -> (c,())) . board) model
             checkerEvs <- listWithKey checkerMap (\c _ -> showChecker c)
-            checkerEv <- mapDyn (leftmost . M.elems) checkerEvs
+            checkerEv <- mapDyn (leftmost . elems) checkerEvs
 
             let getMoves model@(Model path board) = zip path $ tail path
-            moveMap <- mapDyn (M.fromList . map (\c -> (c,())) . getMoves) model
+            moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) model
             listWithKey moveMap (\c _ -> showMove c)
 
             return $ switchPromptlyDyn checkerEv
