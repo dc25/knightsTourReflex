@@ -12,7 +12,7 @@ w = 450
 h = 450
 rowCount=10
 colCount=10
-dt = 0.05
+dt = 0.07
 
 type Cell = (Int, Int)
 
