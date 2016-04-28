@@ -121,8 +121,8 @@ main :: IO ()
 main = do
     startTime <- getCurrentTime
     mainWidget $ do
+        ticks <- fmap (const Tick) <$> tickLossy dt startTime 
         rec selection <- view model
-            ticks <- fmap (const Tick) <$> tickLossy dt startTime 
             model <- foldDyn update initModel $ mergeWith const [selection, ticks]
         return ()
 
