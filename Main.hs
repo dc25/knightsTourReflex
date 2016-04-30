@@ -30,7 +30,7 @@ view model = do
     let 
         ns = Just "http://www.w3.org/2000/svg"
 
-        fillColor r c = if (r + c) `mod` 2 == 0 then "blue" else "grey"
+        fillColor (r,c) = if (r + c) `mod` 2 == 0 then "blue" else "grey"
 
         showChecker :: MonadWidget t m => Cell -> m (Event t Action)
         showChecker cell@(r, c) = do
@@ -39,7 +39,7 @@ view model = do
                                      <> "y" =: show r 
                                      <> "width" =: "1" 
                                      <> "height" =: "1" 
-                                     <> "fill" =: fillColor r c)
+                                     <> "fill" =: fillColor cell)
                        $ return ()
             return $ const (SetStart cell) <$> domEvent Click el 
 
