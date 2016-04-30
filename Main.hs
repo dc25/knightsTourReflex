@@ -9,8 +9,8 @@ import           Data.Function (on)
 
 w = 450
 h = 450
-rowCount=14
-colCount=14
+rowCount=12
+colCount=12
 dt = 0.05
 
 type Cell = (Int, Int)
@@ -44,12 +44,12 @@ view model = do
             return $ const (SetStart cell) <$> domEvent Click el 
 
         showMove :: MonadWidget t m => (Cell, Cell) -> m (Event t ())
-        showMove (pt0, pt1) = do
+        showMove ((r0, c0), (r1, c1)) = do
             elDynAttrNS' ns "line" 
-                 (constDyn $  "x1" =: show ((snd pt0 & fromIntegral :: Float) + 0.5)
-                           <> "y1" =: show ((fst pt0 & fromIntegral :: Float) + 0.5)
-                           <> "x2" =: show ((snd pt1 & fromIntegral :: Float) + 0.5)
-                           <> "y2" =: show ((fst pt1 & fromIntegral :: Float) + 0.5)
+                 (constDyn $  "x1" =: show ((fromIntegral c0 :: Float) + 0.5)
+                           <> "y1" =: show ((fromIntegral r0 :: Float) + 0.5)
+                           <> "x2" =: show ((fromIntegral c1 :: Float) + 0.5)
+                           <> "y2" =: show ((fromIntegral r1 :: Float) + 0.5)
                            <> "style" =: "stroke:yellow;stroke-width:0.05" ) 
                  $ return ()
             return never
@@ -59,7 +59,8 @@ view model = do
             checkerEv <- fmap leftmost $ sequence $ fmap showChecker board
 
             let getMoves model = zip model $ tail model
-            moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) model
+
+            moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) model 
             listWithKey moveMap (\c _ -> showMove c)
 
             return checkerEv
@@ -74,7 +75,7 @@ view model = do
         elAttr "h2" center $ text "(pick a square)"
         elAttr "div" center $ do
             (_, ev) <- elDynAttrNS' ns "svg" 
-                            (constDyn $  "viewBox" =: ("0 0 " ++ show rowCount ++ " " ++ show colCount)
+                            (constDyn $  "viewBox" =: ("0 0 " ++ show colCount ++ " " ++ show rowCount)
                                       <> "width" =: show w
                                       <> "height" =: show h)
                         $ elStopPropagationNS ns "g" Click $ render model
