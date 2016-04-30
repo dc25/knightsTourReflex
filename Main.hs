@@ -9,15 +9,13 @@ import           Data.Function (on)
 
 w = 450
 h = 450
-rowCount=12
-colCount=12
-dt = 0.02
+rowCount=14
+colCount=14
+dt = 0.05
 
 type Cell = (Int, Int)
 
-data Model = Model 
-    { path :: [Cell]
-    }
+type Model = [Cell]
 
 board = do r <- [0..rowCount-1] 
            c <- [0..colCount-1] 
@@ -25,9 +23,7 @@ board = do r <- [0..rowCount-1]
 
 data Action = Tick | SetStart Cell
 
-initModel = let
-        path = []
-    in Model path 
+initModel = []
 
 view :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
 view model = do
@@ -61,21 +57,20 @@ view model = do
         render :: MonadWidget t m => Dynamic t Model -> m (Event t Action)
         render model = do
             checkerEv <- fmap leftmost $ sequence $ fmap showChecker board
-            -- checkerEv <- leftmost  checkerEvs
 
-            let getMoves model@(Model path ) = zip path $ tail path
+            let getMoves model = zip model $ tail model
             moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) model
             listWithKey moveMap (\c _ -> showMove c)
 
-            return $ checkerEv
+            return checkerEv
 
         center = "style" =: "text-align: center;"
 
-    -- unvisited <- mapDyn (\model -> "Unvisited count : " ++ show (length board - (length.path) model)) model
+    unvisited <- mapDyn (\m -> "unvisited count = " ++ show (length board - length m)) model
 
     el "div" $ do
         elAttr "h2" center $ text "Knight's Tour"
-        -- elAttr "h2" center $ dynText $ constDyn 0
+        elAttr "h2" center $ dynText unvisited
         elAttr "h2" center $ text "(pick a square)"
         elAttr "div" center $ do
             (_, ev) <- elDynAttrNS' ns "svg" 
@@ -86,7 +81,7 @@ view model = do
             return ev
 
 nextMoves :: Model -> Cell -> [Cell]
-nextMoves model@(Model path ) startCell = 
+nextMoves model startCell = 
   let c = [ 1,  2, -1, -2]
 
       km = do cx <- c
@@ -95,25 +90,24 @@ nextMoves model@(Model path ) startCell =
 
       jumps = map (\cell -> (fst cell + fst startCell, snd cell + snd startCell)) km
 
-  in filter (\j -> elem j board && notElem j path ) jumps
+  in filter (\j -> elem j board && notElem j model ) jumps
 
 bestMove :: Model -> Maybe Cell
-bestMove model@(Model path ) = 
-    let options = (nextMoves model $ head path)
+bestMove model = 
+    let options = (nextMoves model $ head model)
     in if null options 
        then Nothing 
        else Just $ minimumBy (compare `on` (length . nextMoves model)) options
 
 update :: Action -> Model -> Model
-update action model@(Model path ) =
+update action model =
     case action of
-        SetStart start -> 
-            Model [start] 
+        SetStart start -> [start] 
         Tick ->  
-            if null path then model 
+            if null model then model 
             else case bestMove model of
                      Nothing -> model
-                     Just best ->  Model (best:path) 
+                     Just best -> best:model
 
 main :: IO ()
 main = do
