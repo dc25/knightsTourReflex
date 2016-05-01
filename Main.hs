@@ -18,9 +18,7 @@ type Cell = (Int, Int)
 
 type Tour = [Cell]
 
-board = do r <- [0..rowCount-1] 
-           c <- [0..colCount-1] 
-           [(r,c)]
+board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
 
 data Action = Tick | SetStart Cell
 
