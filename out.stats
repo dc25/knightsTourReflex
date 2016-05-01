@@ -7,10 +7,10 @@ depen_HCFzp6ZGqMz1lvJkHhl9BD:46586
 excep_GsT9breZyJSLZ8kkCjLGTR:4658
 ghc-prim:                43007
 ghcjs_B7KLFJ07Vte3zPHAgRIBTb:11013
-ghcjs_D7BYGeMTlMGF2My8KZzKUS:152316
+ghcjs_D7BYGeMTlMGF2My8KZzKUS:152322
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk:9821
 integer-gmp:             41457
-main:                    44838
+main:                    45448
 refle_BP42iAL8rA7IBOuWCaV0zs:400019
 refle_IbNW0IEhD2N2cZrEG6FTBQ:507467
 reftf_JOU40Nd0lxyACBtr3v80Qj:1202
@@ -116,7 +116,7 @@ ghcjs_D7BYGeMTlMGF2My8KZzKUS
     GHCJS.DOM.JSFFI.Generated.NamedNodeMap:936
     GHCJS.DOM.JSFFI.Generated.Node:     6721
     GHCJS.DOM.JSFFI.Generated.Window:   1490
-    GHCJS.DOM.Types:                    99087
+    GHCJS.DOM.Types:                    99093
 
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk
     GHCJS.Marshal:                      7262
@@ -128,7 +128,7 @@ integer-gmp
     GHC.Integer.Type:                   41124
 
 main
-    Main:                               44838
+    Main:                               45448
 
 refle_BP42iAL8rA7IBOuWCaV0zs
     Data.Functor.Misc:                  5280
@@ -170,5 +170,5 @@ trans_KzbnBSIEqPI2eU1Inn4mzm
 
 
 
-packed metadata: 381593
+packed metadata: 381642
 
