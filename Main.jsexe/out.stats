@@ -1,16 +1,16 @@
 code size summary per package:
 
-base:                    432115
+base:                    431487
 conta_5w3UY4chXx62LVUOUrXeRm:180106
 depen_5vw10fkSDDD0LdF4Qk8khv:2833
 depen_HCFzp6ZGqMz1lvJkHhl9BD:46586
 excep_GsT9breZyJSLZ8kkCjLGTR:4658
 ghc-prim:                43181
 ghcjs_B7KLFJ07Vte3zPHAgRIBTb:11013
-ghcjs_D7BYGeMTlMGF2My8KZzKUS:152267
+ghcjs_D7BYGeMTlMGF2My8KZzKUS:152262
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk:9821
 integer-gmp:             41457
-main:                    46976
+main:                    46554
 refle_BP42iAL8rA7IBOuWCaV0zs:400019
 refle_IbNW0IEhD2N2cZrEG6FTBQ:507467
 reftf_JOU40Nd0lxyACBtr3v80Qj:1202
@@ -27,7 +27,7 @@ base
     Control.Exception.Base:             6808
     Control.Monad.Fix:                  584
     Data.Fixed:                         3840
-    Data.Foldable:                      5134
+    Data.Foldable:                      4947
     Data.Function:                      381
     Data.Functor:                       108
     Data.Maybe:                         1186
@@ -66,7 +66,7 @@ base
     GHC.IO.Handle.Types:                3571
     GHC.IORef:                          166
     GHC.Int:                            802
-    GHC.List:                           18675
+    GHC.List:                           18234
     GHC.MVar:                           188
     GHC.Num:                            3527
     GHC.Ptr:                            188
@@ -116,7 +116,7 @@ ghcjs_D7BYGeMTlMGF2My8KZzKUS
     GHCJS.DOM.JSFFI.Generated.NamedNodeMap:936
     GHCJS.DOM.JSFFI.Generated.Node:     6721
     GHCJS.DOM.JSFFI.Generated.Window:   1490
-    GHCJS.DOM.Types:                    99038
+    GHCJS.DOM.Types:                    99033
 
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk
     GHCJS.Marshal:                      7262
@@ -128,7 +128,7 @@ integer-gmp
     GHC.Integer.Type:                   41124
 
 main
-    Main:                               46976
+    Main:                               46554
 
 refle_BP42iAL8rA7IBOuWCaV0zs
     Data.Functor.Misc:                  5280
@@ -170,5 +170,5 @@ trans_KzbnBSIEqPI2eU1Inn4mzm
 
 
 
-packed metadata: 380601
+packed metadata: 380249
 
