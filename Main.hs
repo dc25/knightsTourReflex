@@ -10,8 +10,8 @@ import           Data.Function (on)
 -- parameters
 w = 450
 h = 450
-rowCount=10
-colCount=10
+rowCount=12
+colCount=12
 dt = 0.05
 
 type Cell = (Int, Int)
@@ -54,12 +54,9 @@ view board tour = do
         render :: MonadWidget t m => Dynamic t Tour -> m (Event t Action)
         render tour = do
             checkerEv <- sequence $ fmap showChecker board
-
             let getMoves tour = zip tour $ tail tour
-
             moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) tour 
             listWithKey moveMap (\c _ -> showMove c)
-
             return $ leftmost checkerEv
 
         center = "style" =: "text-align: center;"
@@ -80,15 +77,10 @@ view board tour = do
 
 -- | Return a list of locations that can be reached in one move.
 nextMoves :: Board -> Tour -> Cell -> [Cell]
-nextMoves board tour startCell = 
+nextMoves board tour base = 
   let c = [ 1,  2, -1, -2]
-
-      km = do cx <- c
-              cy <- c
-              if abs cx == abs cy then [] else [(cx,cy)]
-
-      jumps = map (\cell -> (fst cell + fst startCell, snd cell + snd startCell)) km
-
+      km = [(cx, cy) | cx <- c, cy <- c, abs cx /= abs cy]
+      jumps = map (\mv -> (fst mv + fst base, snd mv + snd base)) km
   in filter (\j -> elem j board && notElem j tour ) jumps
 
 -- | Return the preferred location reachable in one move.

@@ -1,16 +1,16 @@
 code size summary per package:
 
-base:                    437104
+base:                    432282
 conta_5w3UY4chXx62LVUOUrXeRm:182061
 depen_5vw10fkSDDD0LdF4Qk8khv:2833
 depen_HCFzp6ZGqMz1lvJkHhl9BD:46586
 excep_GsT9breZyJSLZ8kkCjLGTR:4658
-ghc-prim:                43007
+ghc-prim:                43181
 ghcjs_B7KLFJ07Vte3zPHAgRIBTb:11013
-ghcjs_D7BYGeMTlMGF2My8KZzKUS:152314
+ghcjs_D7BYGeMTlMGF2My8KZzKUS:152278
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk:9821
 integer-gmp:             41457
-main:                    46263
+main:                    47061
 refle_BP42iAL8rA7IBOuWCaV0zs:400019
 refle_IbNW0IEhD2N2cZrEG6FTBQ:507467
 reftf_JOU40Nd0lxyACBtr3v80Qj:1202
@@ -42,7 +42,7 @@ base
     Foreign.Marshal.Array:              2038
     Foreign.Storable:                   2680
     GHC.Arr:                            3667
-    GHC.Base:                           14718
+    GHC.Base:                           9896
     GHC.Conc.Sync:                      7822
     GHC.Enum:                           19754
     GHC.Err:                            382
@@ -99,7 +99,7 @@ excep_GsT9breZyJSLZ8kkCjLGTR
 
 ghc-prim
     GHC.CString:                        4537
-    GHC.Classes:                        35737
+    GHC.Classes:                        35911
     GHC.IntWord64:                      146
     GHC.Tuple:                          1098
     GHC.Types:                          1489
@@ -116,7 +116,7 @@ ghcjs_D7BYGeMTlMGF2My8KZzKUS
     GHCJS.DOM.JSFFI.Generated.NamedNodeMap:936
     GHCJS.DOM.JSFFI.Generated.Node:     6721
     GHCJS.DOM.JSFFI.Generated.Window:   1490
-    GHCJS.DOM.Types:                    99085
+    GHCJS.DOM.Types:                    99049
 
 ghcjs_Kc7TQ2cEDg1F5e5cgY2Vuk
     GHCJS.Marshal:                      7262
@@ -128,7 +128,7 @@ integer-gmp
     GHC.Integer.Type:                   41124
 
 main
-    Main:                               46263
+    Main:                               47061
 
 refle_BP42iAL8rA7IBOuWCaV0zs
     Data.Functor.Misc:                  5280
@@ -170,5 +170,5 @@ trans_KzbnBSIEqPI2eU1Inn4mzm
 
 
 
-packed metadata: 381720
+packed metadata: 380638
 
