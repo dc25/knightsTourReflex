@@ -8,8 +8,8 @@ import           Data.Monoid ((<>))
 import           Data.Function (on)
 
 -- parameters
-w = 450
-h = 450
+w = 480
+h = 480
 rowCount=10
 colCount=10
 dt = 0.05
