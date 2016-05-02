@@ -51,8 +51,8 @@ view board tour = do
                  $ return ()
             return never
 
-        render :: MonadWidget t m => Dynamic t Tour -> m (Event t Action)
-        render tour = do
+        render :: MonadWidget t m => Board -> Dynamic t Tour -> m (Event t Action)
+        render board tour = do
             checkerEv <- sequence $ fmap showChecker board
             let getMoves tour = zip tour $ tail tour
             moveMap <- mapDyn (fromList . map (\c -> (c,())) . getMoves) tour 
@@ -72,7 +72,7 @@ view board tour = do
                             (constDyn $  "viewBox" =: ("0 0 " ++ show colCount ++ " " ++ show rowCount)
                                       <> "width" =: show w
                                       <> "height" =: show h)
-                        $ elStopPropagationNS ns "g" Click $ render tour
+                        $ elStopPropagationNS ns "g" Click $ render board tour
             return ev
 
 -- | Return a list of locations that can be reached in one move.
