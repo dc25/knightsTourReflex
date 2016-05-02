@@ -87,13 +87,14 @@ nextMoves board tour (x,y) =
 -- | Return the preferred location reachable in one move.
 bestMove :: Board -> Tour -> Maybe Cell
 bestMove board tour = 
-    if null tour 
-    then Nothing
-    else 
-        let options = (nextMoves board tour $ head tour)
-        in if null options 
-           then Nothing 
-           else Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
+    case tour of 
+    [] -> Nothing
+    (x:xs) -> 
+        let options = nextMoves board tour x
+        in case options of
+           [] -> Nothing 
+           _ -> Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
+
 
 -- | Given a board, an action and existing tour, return an updated tour.
 update :: Board -> Action -> Tour -> Tour
