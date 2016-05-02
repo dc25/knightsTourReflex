@@ -10,8 +10,8 @@ import           Data.Function (on)
 -- parameters
 w = 450
 h = 450
-rowCount=12
-colCount=12
+rowCount=10
+colCount=10
 dt = 0.05
 
 type Cell = (Int, Int)
@@ -91,7 +91,7 @@ bestMove board tour =
        then Nothing 
        else Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
 
--- | Given an action and existing tour, return an updated tour.
+-- | Given a board, an action and existing tour, return an updated tour.
 update :: Board -> Action -> Tour -> Tour
 update board action tour =
     case action of
