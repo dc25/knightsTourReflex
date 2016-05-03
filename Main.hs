@@ -53,14 +53,18 @@ view width height rowCount colCount board tour =
             moveMap <- mapDyn (fromSet (const ()) . fromList . getMoves) tour 
             listWithKey moveMap (\c _ -> showMove c)
             return $ leftmost checkerEv
-        border = "style" =: "border: 5px solid navy;"
+
+        border = "style" =: ("width: " ++ show width ++ "px; border: 5px solid navy;")
+
+        centerText = "style" =: "text-align: center" 
 
     in do
         unvisited <- mapDyn (\m -> "unvisited count = " ++ show (length board - length m)) tour
 
 
         elAttr "div" border $ do
-            el "h2" $ dynText unvisited
+            elAttr "h2" centerText $ dynText unvisited
+            elAttr "h3" centerText $ text "(pick a square)"
             el "div" $ do
                 (_, ev) <- elDynAttrNS' ns "svg" 
                                 (constDyn $  "viewBox" =: ("0 0 " ++ show colCount ++ " " ++ show rowCount)
@@ -98,30 +102,22 @@ update board action tour =
                      Nothing -> tour
                      Just best -> best:tour
 
-knightsTour :: MonadWidget t m => UTCTime -> Int -> Int -> Int -> Int -> NominalDiffTime -> m ()
-knightsTour startTime width height rowCount colCount dt = do 
-    ticks <- fmap (const Tick) <$> tickLossy dt startTime 
-    let board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
-    rec selection <- view width height rowCount colCount board tour 
-        tour <- foldDyn (update board) []  $ mergeWith const [selection, ticks]
-    return ()
-
 main :: IO ()
 main = 
-    let
-        floatLeft = "style" =: "float: left; padding: 10px"
-        clearBoth = "style" =: "clear: both"
-    in do
+    do
         startTime <- getCurrentTime
         mainWidget $ do
-            elAttr "div" floatLeft $ 
-                knightsTour startTime 240 240 7 7 0.15
-            elAttr "div" floatLeft $ 
-                knightsTour startTime 230 230 10 10 0.07
-            elAttr "div" clearBoth $ 
-                return ()
-            elAttr "div" floatLeft $ 
-                knightsTour startTime 250 250 6 6 0.3
-            elAttr "div" floatLeft $ 
-                knightsTour startTime 210 210 8 8 0.05
+
+            let rowCount = 10
+                colCount = 10
+                width = 400
+                height = 400
+                dt = 0.1
+
+            let board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
+            ticks <- fmap (const Tick) <$> tickLossy dt startTime 
+            rec
+                selection <- view width height colCount rowCount board tour 
+                tour <- foldDyn (update board) []  $ mergeWith const [selection, ticks]
+            return ()
 
