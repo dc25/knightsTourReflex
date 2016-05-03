@@ -109,19 +109,19 @@ knightsTour startTime width height rowCount colCount dt = do
 main :: IO ()
 main = 
     let
-        fl = "style" =: "float: left; padding: 10px"
-        cb = "style" =: "clear: both"
+        floatLeft = "style" =: "float: left; padding: 10px"
+        clearBoth = "style" =: "clear: both"
     in do
         startTime <- getCurrentTime
         mainWidget $ do
-            elAttr "div" fl $ 
+            elAttr "div" floatLeft $ 
                 knightsTour startTime 240 240 7 7 0.15
-            elAttr "div" fl $ 
+            elAttr "div" floatLeft $ 
                 knightsTour startTime 230 230 10 10 0.07
-            elAttr "div" cb $ 
+            elAttr "div" clearBoth $ 
                 return ()
-            elAttr "div" fl $ 
+            elAttr "div" floatLeft $ 
                 knightsTour startTime 250 250 6 6 0.3
-            elAttr "div" fl $ 
+            elAttr "div" floatLeft $ 
                 knightsTour startTime 210 210 8 8 0.05
 
