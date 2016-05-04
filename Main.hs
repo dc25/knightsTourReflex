@@ -114,9 +114,9 @@ main =
                 dt = 0.1
 
             let board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
-            ticks <- fmap (const Advance) <$> tickLossy dt startTime 
+            advanceEvent <- fmap (const Advance) <$> tickLossy dt startTime 
             rec
-                selection <- view width height colCount rowCount board tour 
-                tour <- foldDyn (update board) []  $ mergeWith const [selection, ticks]
+                setStartEvent <- view width height colCount rowCount board tour 
+                tour <- foldDyn (update board) []  $ mergeWith const [setStartEvent, advanceEvent]
             return ()
 
