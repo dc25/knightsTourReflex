@@ -91,7 +91,7 @@ view width height rowCount colCount board tour =
         render :: MonadWidget t m => Board -> Dynamic t Tour -> m (Event t Action)
         render board tour = do
             checkerEv <- sequence $ fmap showChecker board
-            let getMoves tour = reverse $ zip tour $ tail tour
+            let getMoves tour = zip tour $ tail tour
             moveMap <- mapDyn (fromSet (const ()) . fromList . getMoves) tour 
             listWithKey moveMap (\c _ -> showMove c)
             return $ leftmost checkerEv
