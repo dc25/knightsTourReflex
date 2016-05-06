@@ -1,12 +1,12 @@
 {-# LANGUAGE RecursiveDo #-}
-import           Data.Map (Map, fromSet, elems)
-import           Data.Set (fromList)
-import           Data.List (minimumBy)
-import           Reflex.Dom (MonadWidget, Dynamic, Event, (=:), mainWidget, el, elAttr, elDynAttrNS', elStopPropagationNS, text, dynText, constDyn, mapDyn, mergeWith, foldDyn, EventName(Click), listWithKey, leftmost, domEvent)
-import           Reflex.Dom.Time (tickLossy)
-import           Data.Time.Clock (getCurrentTime)
-import           Data.Monoid ((<>))
-import           Data.Function (on)
+import Data.Map (Map, fromSet, elems)
+import Data.Set (fromList)
+import Data.List (minimumBy)
+import Reflex.Dom (MonadWidget, Dynamic, Event, (=:), mainWidget, el, elAttr, elDynAttr, elDynAttrNS', elStopPropagationNS, text, textInput, dynText, constDyn, mapDyn, mergeWith, foldDyn, EventName(Click), listWithKey, leftmost, domEvent, def, value)
+import Reflex.Dom.Time (tickLossy)
+import Data.Time.Clock (getCurrentTime)
+import Data.Monoid ((<>))
+import Data.Function (on)
 
 type Cell = (Int, Int)
 type Tour = [Cell]
@@ -51,7 +51,7 @@ svgNamespace = Just "http://www.w3.org/2000/svg"
 -- | Return click event with checker's location.
 showChecker :: MonadWidget t m => Cell -> m (Event t Action)
 showChecker cell@(r, c) = do
-    (el, ev) <- elDynAttrNS' svgNamespace "rect" 
+    (el, _) <- elDynAttrNS' svgNamespace "rect" 
                    (constDyn $  "x" =: show c 
                              <> "y" =: show r 
                              <> "width" =: "1" 
@@ -83,6 +83,9 @@ render board tour = do
     let getMoves :: [Cell] -> [(Cell,Cell)]  -- The Cell to Cell moves in a tour
         getMoves tour = zip tour $ tail tour 
 
+    -- listWithKey wants a map as first argument.
+    -- Use of this map lets listWithKey track changing dynamic content
+    -- and minimizes redraw.
     moveMap <- mapDyn (fromSet (const ()) . fromList . getMoves) tour 
     listWithKey moveMap (\c _ -> showMove c)
 
