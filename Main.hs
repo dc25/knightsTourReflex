@@ -118,7 +118,7 @@ view width height rowCount colCount board tour = do
                             (constDyn $  "viewBox" =: ("0 0 " ++ show colCount ++ " " ++ show rowCount)
                                       <> "width" =: show width
                                       <> "height" =: show height)
-                            $ elStopPropagationNS svgNamespace "g" Click $ render board tour
+                            $ render board tour
             return ev
 
 
