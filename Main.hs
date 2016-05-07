@@ -17,9 +17,13 @@ data Action = Advance | SetStart Cell
 -- | Return a list of locations that can be reached in one move.
 nextMoves :: Board -> Tour -> Cell -> [Cell]
 nextMoves board tour (x,y) = 
-  let c = [ 1,  2, -1, -2]
-      km = [(x+cx, y+cy) | cx <- c, cy <- c, abs cx /= abs cy]
-  in filter (\pos -> elem pos board && notElem pos tour ) km
+    [pos | let c = [ 1,  2, -1, -2],
+           cx <- c, 
+           cy <- c, 
+           abs cx /= abs cy,
+           let pos = (x+cx, y+cy),
+           pos `elem` board,
+           pos `notElem` tour ]
 
 -- | Return the preferred location reachable in one move.
 bestMove :: Board -> Tour -> Maybe Cell
@@ -89,7 +93,7 @@ render board tour = do
     moveMap <- mapDyn (fromSet (const ()) . fromList . getMoves) tour 
     listWithKey moveMap (\c _ -> showMove c)
 
-    -- Using mapDyn/dyn works but is slower than mapDyn/listWithKey
+    -- Using mapDyn/dyn (below) works but is slower than mapDyn/listWithKey
     -- showMoveList <- mapDyn (mapM showMove.getMoves) tour 
     -- dyn showMoveList
     
