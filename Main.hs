@@ -7,6 +7,7 @@ import Reflex.Dom.Time (tickLossy)
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
 import Data.Function (on)
+import Control.Monad.Trans (liftIO)
 
 type Cell = (Int, Int)
 type Tour = [Cell]
@@ -143,10 +144,7 @@ view width height rowCount colCount board tour = do
 
 
 main :: IO ()
-main = 
-    do
-        startTime <- getCurrentTime
-        mainWidget $ do
+main = mainWidget $ do
 
             let width = 400
                 height = 400
@@ -155,7 +153,8 @@ main =
                 dt = 0.05
 
             let board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
-            advanceEvent <- fmap (const Advance) <$> tickLossy dt startTime 
+            now <- liftIO getCurrentTime
+            advanceEvent <- fmap (const Advance) <$> tickLossy dt now
             rec
                 setStartEvent <- view width height rowCount colCount board tour 
                 tour <- foldDyn (update board) []  $ mergeWith const [setStartEvent, advanceEvent]
