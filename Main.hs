@@ -2,7 +2,58 @@
 import Data.Map (Map, fromSet, elems)
 import Data.Set (fromList)
 import Data.List (minimumBy)
-import Reflex.Dom (MonadWidget, Dynamic, Event, (=:), mainWidget, el, elAttr, elDynAttr, elDynAttrNS', elStopPropagationNS, text, textInput, dynText, constDyn, mapDyn, mergeWith, foldDyn, EventName(Click), listWithKey, leftmost, domEvent, def, value, count)
+
+import Reflex.Dom (
+                  -- typeclasses
+                    MonadWidget   -- Used to specify typeclass constraints.
+
+                  , Behavior      -- a Behavior is a value that can change over time.
+
+                  , Event         -- an Event "fires" periodically over time and only has a value
+                                  --      when an Event fires it has a value but not otherwise.
+                                  --
+                                  --
+                  , Dynamic       -- combines a Behavior with an Event that fires 
+                                  --      when that Behavior's value changes.
+
+                  -- the Reflex "entry point"
+                  , mainWidget    
+
+                  -- general HTML element creation functions
+                  , el
+                  , elAttr
+                  , elDynAttr
+                  , elDynAttrNS'
+                  , elStopPropagationNS
+
+                  -- specialty HTML element creation functions
+                  , text
+                  , textInput
+                  , dynText
+
+                  -- functions for creating/combining Dynamic type records.
+                  , constDyn      -- creates a Dynamic whose value is const over time.
+                  , mapDyn        -- maps a function over a Dynamic to get another Dynamic
+                  , listWithKey   -- maps a function over a Dynamic map (typically for DOM generation)
+                  , holdDyn       -- (over time, tracks Event values into a Dynamic )
+                  , foldDyn       -- (over time, folds an Event into a Dynamic )
+                  , count         -- (converts from Event to Dynamic)
+
+                  -- creates an Event 
+                  , domEvent      
+
+                  -- functions for combining Event type records.
+                  , mergeWith
+                  , leftmost
+
+                  -- misc helper functions.
+                  , def           -- type dependent default value
+                  , value         -- type dependent value extraction 
+
+                  , (=:)          -- used for map construction (typically for HTML attributes)
+                  , EventName(Click)  
+                  )
+
 import Reflex.Dom.Time (tickLossy)
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
@@ -16,11 +67,8 @@ type Board = [Cell]
 data Action = Advance | SetStart Cell
 
 --------------------------------------------------------------------------------
--- Warnsdorff's Rule: “Play the knight to a square 
--- where it commands the fewest cells not yet used.”
--- ( thank you Mr. Warnsdorff )
+-- Knight's Tour generation functionality follows...
 --------------------------------------------------------------------------------
-
 -- | Return a list of locations that can be reached in one move.
 nextMoves :: Board -> Tour -> Cell -> [Cell]
 nextMoves board tour (x,y) = 
@@ -139,7 +187,6 @@ view width height rowCount colCount board tour = do
                                       <> "height" =: show height)
                             $ render board tour
             return ev
-
 
 
 
