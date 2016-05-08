@@ -17,7 +17,7 @@ data Action = Advance | SetStart Cell
 --------------------------------------------------------------------------------
 -- Warnsdorff's Rule: “Play the knight to a square 
 -- where it commands the fewest cells not yet used.”
--- ( thank you Mr. Warnsdorf )
+-- ( thank you Mr. Warnsdorff )
 --------------------------------------------------------------------------------
 
 -- | Return a list of locations that can be reached in one move.
