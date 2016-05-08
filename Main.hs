@@ -14,39 +14,52 @@ type Board = [Cell]
 
 data Action = Advance | SetStart Cell
 
+--------------------------------------------------------------------------------
+-- Warnsdorff's Rule: “Play the knight to a square 
+-- where it commands the fewest cells not yet used.”
+-- ( thank you Mr. Warnsdorf )
+--------------------------------------------------------------------------------
+
 -- | Return a list of locations that can be reached in one move.
 nextMoves :: Board -> Tour -> Cell -> [Cell]
 nextMoves board tour (x,y) = 
-    [pos | let c = [ 1,  2, -1, -2],
-           cx <- c, 
-           cy <- c, 
-           abs cx /= abs cy,
-           let pos = (x+cx, y+cy),
-           pos `elem` board,
-           pos `notElem` tour ]
+    [pos | let c = [ 1,  2, -1, -2]
+         , cx <- c 
+         , cy <- c 
+         , abs cx /= abs cy
+         , let pos = (x+cx, y+cy)
+         , pos `elem` board
+         , not (pos `elem` tour) ]
 
--- | Return the preferred location reachable in one move.
+--- | Return the preferred location reachable in one move.
 bestMove :: Board -> Tour -> Maybe Cell
-bestMove board tour = 
-    case tour of 
-    [] -> Nothing -- if no tour in progress then no best move.
-    (x:_) -> 
-        let options = nextMoves board tour x
-        in case options of
-           [] -> Nothing -- if no next move then no best move.
-           _ -> Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
 
+bestMove _ [] = Nothing -- no best move if no tour is in progress
 
+bestMove board tour@(x:_) = 
+    let options = nextMoves board tour x
+    in case options of
+       [] -> Nothing -- if no next move then no best move.
+       _ -> Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
+
+-- | FRP style update function.
 -- | Given a board, an action and existing tour, return an updated tour.
 update :: Board -> Action -> Tour -> Tour
-update board action tour =
-    case action of
-        SetStart start -> [start] 
-        Advance ->  case bestMove board tour of
-                     Nothing -> tour
-                     Just best -> best:tour
+
+update _ (SetStart start) _ = [start] -- a new tour with designated start point.
+
+update board Advance tour = -- A
+    case bestMove board tour of  -- get best move for board/tour.
+        Just best -> best:tour  -- prepend best to current tour.
+        Nothing -> tour  -- if no best move then nothing changes.
 
 
+
+
+
+--------------------------------------------------------------------------------
+-- SVG display functionality follows...
+--------------------------------------------------------------------------------
 
 -- | Namespace needed for svg elements.
 svgNamespace = Just "http://www.w3.org/2000/svg"
