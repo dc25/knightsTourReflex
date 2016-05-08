@@ -26,10 +26,12 @@ nextMoves board tour (x,y) =
     [pos | let c = [ 1,  2, -1, -2]
          , cx <- c 
          , cy <- c 
-         , abs cx /= abs cy
-         , let pos = (x+cx, y+cy)
-         , pos `elem` board
-         , not (pos `elem` tour) ]
+         , abs cx /= abs cy        
+         , let pos = (x+cx, y+cy)  -- in "board coordinates"
+         , pos `elem` board        -- position is on the board...
+         , not (pos `elem` tour) ] -- but not already on the tour
+
+
 
 --- | Return the preferred location reachable in one move.
 bestMove :: Board -> Tour -> Maybe Cell
@@ -41,6 +43,9 @@ bestMove board tour@(x:_) =
     in case options of
        [] -> Nothing -- if no next move then no best move.
        _ -> Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
+
+
+
 
 -- | FRP style update function.
 -- | Given a board, an action and existing tour, return an updated tour.
