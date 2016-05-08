@@ -2,7 +2,7 @@
 import Data.Map (Map, fromSet, elems)
 import Data.Set (fromList)
 import Data.List (minimumBy)
-import Reflex.Dom (MonadWidget, Dynamic, Event, (=:), mainWidget, el, elAttr, elDynAttr, elDynAttrNS', elStopPropagationNS, text, textInput, dynText, constDyn, mapDyn, mergeWith, foldDyn, EventName(Click), listWithKey, leftmost, domEvent, def, value)
+import Reflex.Dom (MonadWidget, Dynamic, Event, (=:), mainWidget, el, elAttr, elDynAttr, elDynAttrNS', elStopPropagationNS, text, textInput, dynText, constDyn, mapDyn, mergeWith, foldDyn, EventName(Click), listWithKey, leftmost, domEvent, def, value, count)
 import Reflex.Dom.Time (tickLossy)
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
