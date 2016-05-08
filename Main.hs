@@ -7,13 +7,12 @@ import Reflex.Dom (
                   -- typeclasses
                     MonadWidget   -- Used to specify typeclass constraints.
 
-                  , Behavior      -- a Behavior is a value that can change over time.
+                  , Behavior      -- A Behavior is a value that can change over time.
 
-                  , Event         -- an Event "fires" periodically over time and only has a value
-                                  --      when an Event fires it has a value but not otherwise.
-                                  --
-                                  --
-                  , Dynamic       -- combines a Behavior with an Event that fires 
+                  , Event         -- An Event "fires" periodically over time and has a value
+                                  --      when it fires but not otherwise.
+                                  
+                  , Dynamic       -- Combines a Behavior with an Event that fires 
                                   --      when that Behavior's value changes.
 
                   -- the Reflex "entry point"
