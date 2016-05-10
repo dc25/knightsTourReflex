@@ -5,11 +5,11 @@ import Data.List (minimumBy)
 
 import Reflex.Dom (
                   -- typeclasses
-                    MonadWidget   -- Used to specify typeclass constraints.
+                    MonadWidget   -- "MonadWidget t m" is used to specify typeclass constraints.
 
-                  , Behavior      -- A Behavior is a value that can change over time.
+                  , Behavior      -- A "Behavior t" is a value that can change over time.
 
-                  , Event         -- An Event "fires" periodically over time and has a value
+                  , Event         -- An "Event t" "fires" periodically over time and has a value
                                   --      when it fires but not otherwise.
                                   
                   , Dynamic       -- Combines a Behavior with an Event that fires 
@@ -19,11 +19,10 @@ import Reflex.Dom (
                   , mainWidget    
 
                   -- general HTML element creation functions
-                  , el
-                  , elAttr
-                  , elDynAttr
-                  , elDynAttrNS'
-                  , elStopPropagationNS
+                  , el           -- generic HTML element creation
+                  , elAttr       -- generic HTML element with attribute creation
+                  , elDynAttr    -- generic HTML element with dynamic attribute creation
+                  , elDynAttrNS' -- generic HTML element with dynamic attribute in namespace creation
 
                   -- specialty HTML element creation functions
                   , text
@@ -33,13 +32,13 @@ import Reflex.Dom (
                   -- functions for creating/combining Dynamic type records.
                   , constDyn      -- creates a Dynamic whose value is const over time.
                   , mapDyn        -- maps a function over a Dynamic to get another Dynamic
+                  , foldDyn       -- over time, folds an Event into a Dynamic 
                   , listWithKey   -- maps a function over a Dynamic map (typically for DOM generation)
-                  , holdDyn       -- (over time, tracks Event values into a Dynamic )
-                  , foldDyn       -- (over time, folds an Event into a Dynamic )
-                  , count         -- (converts from Event to Dynamic)
 
-                  -- creates an Event 
-                  , domEvent      
+                 
+                  -- Event related
+                  , domEvent          -- creates an Event related to an element.
+                  , EventName(Click)  -- used to specify a Click for Event creation with domEvent
 
                   -- functions for combining Event type records.
                   , mergeWith
@@ -50,10 +49,14 @@ import Reflex.Dom (
                   , value         -- type dependent value extraction 
 
                   , (=:)          -- used for map construction (typically for HTML attributes)
-                  , EventName(Click)  
                   )
 
-import Reflex.Dom.Time (tickLossy)
+import Reflex.Dom.Time 
+                  (
+                    tickLossy -- generates an unending series of tick events.
+                  )
+
+
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
 import Data.Function (on)
