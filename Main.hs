@@ -41,7 +41,6 @@ import Reflex.Dom (
                   , EventName(Click)  -- used to specify a Click for Event creation with domEvent
 
                   -- functions for combining Event type records.
-                  , mergeWith
                   , leftmost
 
                   -- misc helper functions.
@@ -206,6 +205,6 @@ main = mainWidget $ do
             advanceEvent <- fmap (const Advance) <$> tickLossy dt now
             rec
                 setStartEvent <- view width height rowCount colCount board tour 
-                tour <- foldDyn (update board) []  $ mergeWith const [setStartEvent, advanceEvent]
+                tour <- foldDyn (update board) []  $ leftmost [setStartEvent, advanceEvent]
             return ()
 
