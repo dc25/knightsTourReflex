@@ -34,14 +34,10 @@ import Reflex.Dom (
                   , mapDyn        -- maps a function over a Dynamic to get another Dynamic
                   , foldDyn       -- over time, folds an Event into a Dynamic 
                   , listWithKey   -- maps a function over a Dynamic map (typically for DOM generation)
-
-                 
                   -- Event related
                   , domEvent          -- creates an Event related to an element.
                   , EventName(Click)  -- used to specify a Click for Event creation with domEvent
-
-                  -- functions for combining Event type records.
-                  , leftmost
+                  , leftmost          -- combines a list of event records to get a single event.
 
                   -- misc helper functions.
                   , def           -- type dependent default value
@@ -55,7 +51,6 @@ import Reflex.Dom.Time
                     tickLossy -- generates an unending series of tick events.
                   )
 
-
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
 import Data.Function (on)
@@ -65,7 +60,6 @@ type Cell = (Int, Int)
 type Tour = [Cell]
 type Board = [Cell]
 
-data Action = Advance | SetStart Cell
 
 --------------------------------------------------------------------------------
 -- Knight's Tour generation functionality follows...
@@ -95,7 +89,7 @@ bestMove board tour@(x:_) =
        _ -> Just $ minimumBy (compare `on` (length . nextMoves board tour)) options
 
 
-
+data Action = Advance | SetStart Cell
 
 -- | FRP style update function.
 -- | Given a board, an action and existing tour, return an updated tour.
@@ -194,8 +188,8 @@ view width height rowCount colCount board tour = do
 main :: IO ()
 main = mainWidget $ do
 
-            let width = 400
-                height = 400
+            let width = 500
+                height = 500
                 rowCount = 8
                 colCount = 8
                 dt = 0.05
