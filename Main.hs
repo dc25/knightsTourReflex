@@ -2,59 +2,13 @@
 import Data.Map (Map, fromSet, elems)
 import Data.Set (fromList)
 import Data.List (minimumBy)
-
-import Reflex.Dom (
-                  -- typeclasses
-                    MonadWidget   -- "MonadWidget t m" is used to specify typeclass constraints.
-
-                  , Behavior      -- A "Behavior t" is a value that can change over time.
-
-                  , Event         -- An "Event t" "fires" periodically over time and has a value
-                                  --      when it fires but not otherwise.
-                                  
-                  , Dynamic       -- Combines a Behavior with an Event that fires 
-                                  --      when that Behavior's value changes.
-
-                  -- the Reflex "entry point"
-                  , mainWidget    
-
-                  -- general HTML element creation functions
-                  , el           -- generic HTML element creation
-                  , elAttr       -- generic HTML element with attribute creation
-                  , elDynAttr    -- generic HTML element with dynamic attribute creation
-                  , elDynAttrNS' -- generic HTML element with dynamic attribute in namespace creation
-
-                  -- specialty HTML element creation functions
-                  , text
-                  , textInput
-                  , dynText
-
-                  -- functions for creating/combining Dynamic type records.
-                  , constDyn      -- creates a Dynamic whose value is const over time.
-                  , mapDyn        -- maps a function over a Dynamic to get another Dynamic
-                  , foldDyn       -- over time, folds an Event into a Dynamic 
-                  , listWithKey   -- maps a function over a Dynamic map (typically for DOM generation)
-                  -- Event related
-                  , domEvent          -- creates an Event related to an element.
-                  , EventName(Click)  -- used to specify a Click for Event creation with domEvent
-                  , leftmost          -- combines a list of event records to get a single event.
-
-                  -- misc helper functions.
-                  , def           -- type dependent default value
-                  , value         -- type dependent value extraction 
-
-                  , (=:)          -- used for map construction (typically for HTML attributes)
-                  )
-
-import Reflex.Dom.Time 
-                  (
-                    tickLossy -- generates an unending series of tick events.
-                  )
-
 import Data.Time.Clock (getCurrentTime)
 import Data.Monoid ((<>))
 import Data.Function (on)
 import Control.Monad.Trans (liftIO)
+
+import Reflex.Dom 
+import Reflex.Dom.Time 
 
 type Cell = (Int, Int)
 type Tour = [Cell]
@@ -103,9 +57,6 @@ update board Advance tour = -- A
         Nothing -> tour  -- if no best move then nothing changes.
 
 
-
-
-
 --------------------------------------------------------------------------------
 -- SVG display functionality follows...
 --------------------------------------------------------------------------------
@@ -149,16 +100,9 @@ render board tour = do
     let getMoves :: [Cell] -> [(Cell,Cell)]  -- The Cell to Cell moves in a tour
         getMoves tour = zip tour $ tail tour 
 
-    -- listWithKey wants a map as first argument.
-    -- Use of this map lets listWithKey track changing dynamic content
-    -- and minimizes redraw.
     moveMap <- mapDyn (fromSet (const ()) . fromList . getMoves) tour 
     listWithKey moveMap (\c _ -> showMove c)
 
-    -- Using mapDyn/dyn (below) works but is slower than mapDyn/listWithKey
-    -- showMoveList <- mapDyn (mapM showMove.getMoves) tour 
-    -- dyn showMoveList
-    
     return $ leftmost checkerEv
 
 
@@ -187,11 +131,10 @@ view width height rowCount colCount board tour = do
 
 main :: IO ()
 main = mainWidget $ do
-
             let width = 500
                 height = 500
-                rowCount = 8
-                colCount = 8
+                rowCount = 12
+                colCount = 12
                 dt = 0.05
 
             let board = [(r,c) | r <- [0..rowCount-1], c <- [0..colCount-1] ]
